@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "radio-suisse-arabe",
+    "name": "radio suisse arabe",
     "slug": "radio-suisse-arabe",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +8,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#e42220"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,13 +17,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.radio.suisse.arabe"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "backgroundColor": "#e42220"
+      },
+      "package": "com.radio.suisse.arabe"
     },
     "web": {
       "favicon": "./assets/favicon.png"
