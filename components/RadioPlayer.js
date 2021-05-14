@@ -1,28 +1,54 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Video } from 'expo-av';
+import { Audio} from 'expo-av';
 import { useFonts } from "expo-font";
 
 
-export const RadioPlayer = () => {
-    const [videoURI, setVideoURI] = useState('https://s5.radio.co/sd0adce281/listen')
-    const [playing, setPlaying] = useState(false)
-    const videoRef = useRef(null)
 
+export const RadioPlayer = () => {
+    
+    const [playing, setPlaying] = useState(false)
+    const [sound, setSound] = useState(null);
+    
+    const playSound = async () => {
+        console.log('Loading Sound');
+        const { sound } = await Audio.Sound.createAsync(
+        {uri: 'https://s5.radio.co/sd0adce281/listen'}
+        );
+        Audio.setAudioModeAsync({ staysActiveInBackground : true })
+        sound.setOnPlaybackStatusUpdate(handlePlaybackStatusUpdate);
+        setSound(sound);
+        console.log('Playing Sound');
+        await sound.playAsync()
+        setPlaying(true)
+    }
+
+    useEffect(() => {
+        return sound
+          ? () => {
+              console.log('Unloading Sound');
+              sound.unloadAsync(); }
+          : undefined;
+      }, [sound]);
+
+    useEffect(() => {
+            playSound()
+    }, [])
 
     const [loaded] = useFonts({
         "DroidKufiBold": require('../assets/fonts/DroidKufi-Bold.ttf'),
       });
 
-      if (!loaded) {
+    if (!loaded) {
         return null;
-      }
+    }
 
     const togglePlayPause = () => {
-        playing
-            ? videoRef.current.pauseAsync()
-            : videoRef.current.playAsync();
+        if(sound) 
+            playing
+                ? sound.pauseAsync()
+                : sound.playAsync();
     }
 
     const handlePlaybackStatusUpdate = (e) => {
@@ -46,7 +72,7 @@ export const RadioPlayer = () => {
                     setPlaying(playing === false ? true : false)
                     togglePlayPause()
                 }}>
-
+                {/* <ActivityIndicator size="large" color="#00ff00" style={{display: !isLoading ? 'none' : 'flex'}} /> */}
                 <Icon   name= {!playing ? "play" : "pause"} 
                         size={40} color="#ffffff"  
                         
@@ -69,35 +95,12 @@ export const RadioPlayer = () => {
                     source={require('../assets/icon.png')}
                 />
             </View>
-
-            
-            <Video
-                ref={videoRef}
-                source={{ uri: videoURI }}
-                rate={1.0}
-                volume={1.0}
-                isMuted={false}
-                resizeMode="cover"
-                shouldPlay
-                isLooping
-                useNativeControls
-                style={{ width: 0, height: 0 }}
-                onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
-            />
-
         </View>
         
     )
 }
 
 const styles = StyleSheet.create({
-    backgroundVideo: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
-      },
     container: {
         flex: 1,
         flexDirection: 'row',
